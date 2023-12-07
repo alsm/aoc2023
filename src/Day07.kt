@@ -1,7 +1,7 @@
 fun main() {
     data class Hand(val cards: List<Int>, val bid: Int) : Comparable<Hand> {
         fun score(): Int {
-            var h = cards.sortedDescending().groupBy { it }.values.sortedByDescending { it.size }
+            var h = cards.groupBy { it }.values.sortedByDescending { it.size }
             if (h.any { it.contains(1) } && h.size > 1) {
                 val (jokers, rem) = h.partition { it.contains(1) }
                 h = listOf(rem[0]+jokers[0]) + rem.drop(1)
