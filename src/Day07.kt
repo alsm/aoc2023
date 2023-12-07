@@ -7,13 +7,13 @@ fun main() {
                 h = listOf(rem[0]+jokers[0]) + rem.drop(1)
             }
                 
-            return when {
-                h.size == 1 -> 7
-                h.size == 2 && h[0].size == 4 && h[1].size == 1 -> 6
-                h.size == 2 && h[0].size == 3 && h[1].size == 2 -> 5
-                h.size == 3 && h[0].size == 3 -> 4
-                h.size == 3 && h[0].size == 2 -> 3
-                h.size == 4 -> 2
+            return when (h.map{it.size}.sortedDescending()){
+                listOf(5) -> 7
+                listOf(4,1) -> 6
+                listOf(3,2) -> 5
+                listOf(3,1,1) -> 4
+                listOf(2,2,1) -> 3
+                listOf(2,1,1,1) -> 2
                 else -> 1
             }
         }
