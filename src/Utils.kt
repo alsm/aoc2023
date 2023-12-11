@@ -2,6 +2,9 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.io.path.Path
 import kotlin.io.path.readLines
+import java.util.Queue
+import java.util.PriorityQueue
+import kotlin.math.absoluteValue
 
 /**
  * Reads lines from the given input txt file.
@@ -15,17 +18,22 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
         .toString(16)
         .padStart(32, '0')
 
+fun gcd(a: Long, b: Long): Long {
+    if (b == 0L) return a
+    return gcd(b, a % b)
+}
+
 fun lcm(a: Long, b: Long): Long {
-    val larger = if (a > b) a else b
-    val maxLcm = a * b
-    var lcm = larger
-    while (lcm <= maxLcm) {
-        if (lcm % a == 0L && lcm % b == 0L) {
-            return lcm
-        }
-        lcm += larger
-    }
-    return maxLcm
+    return a / gcd(a, b) * b
+}
+
+fun gcd(a: Int, b: Int): Int {
+    if (b == 0) return a
+    return gcd(b, a % b)
+}
+
+fun lcm(a: Int, b: Int): Int {
+    return a / gcd(a, b) * b
 }
 
 fun lcmOfList(num: List<Long>): Long {
@@ -40,3 +48,44 @@ fun lcmOfList(num: List<Long>): Long {
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+data class Point(var x: Long, var y: Long)
+
+fun Point.loc(): Point = this
+
+operator fun Point.plus(other: Point) = Point(this.x + other.x, this.y + other.y)
+
+operator fun Point.minus(other: Point) = Point(this.x - other.x, this.y - other.y)
+
+fun Point.mDistance(other: Point): Long = (this.x - other.x).absoluteValue + (this.y - other.y).absoluteValue
+
+interface Loc {
+    val loc: Point
+    fun connectsTo(): List<Point>
+}
+
+class Graph(val adj: Map<Point, List<Loc>>) {
+    fun shortestPath(start: Point, end: Point): Int {
+        val seen = mutableSetOf<Loc>()
+        val q: Queue<Loc> = PriorityQueue()
+
+        while (q.isNotEmpty()) {
+            val np = q.poll()
+
+            if (np !in seen) {
+                seen += np
+                val neighbors = np.connectsTo()
+                        .filter { it -> adj[it]!!.map { it.loc }.any { it == np.loc } }
+//                if (neighbors.any { isGoal(it) }) return nextPoint.cost + 1
+//                queue.addAll(neighbors.map { PathCost(it, nextPoint.cost + 1) })
+            }
+        }
+        throw IllegalStateException("No valid path from $start to goal")
+    }
+}
+
+fun List<Point>.pairs(): Sequence<Pair<Point, Point>> = sequence {
+    for (i in 0 until size - 1)
+        for (j in i + 1 until size)
+            yield(get(i) to get(j))
+}
