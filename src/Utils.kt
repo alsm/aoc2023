@@ -4,12 +4,15 @@ import kotlin.io.path.Path
 import kotlin.io.path.readLines
 import java.util.Queue
 import java.util.PriorityQueue
+import kotlin.io.path.readText
 import kotlin.math.absoluteValue
 
 /**
  * Reads lines from the given input txt file.
  */
 fun readInput(name: String) = Path("src/$name.txt").readLines()
+
+fun readInputGroups(name: String) = Path("src/$name.txt").readText().split("\n\n").map { it.split("\n") }
 
 /**
  * Converts string to md5 hash.
@@ -42,6 +45,10 @@ fun lcmOfList(num: List<Long>): Long {
         result = lcm(result, num[i])
     }
     return result
+}
+
+inline fun <reified T> Array<Array<T>>.transpose(): Array<Array<T>> {
+    return Array(this[0].size) { i -> Array(this.size) { j -> this[j][i] } }
 }
 
 /**
